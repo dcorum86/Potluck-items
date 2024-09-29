@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Potluck Party Intake Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label, input, button {
+            margin: 10px 0;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        ul li {
+            background-color: #e2e2e2;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Potluck Party Intake Form</h1>
+    <form id="potluckForm">
+        <label for="name">Your Name:</label>
+        <input type="text" id="name" required>
+
+        <label for="item">What Are You Bringing?:</label>
+        <input type="text" id="item" required>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <h2>Brought Items:</h2>
+    <ul id="itemList">
+        <!-- Submitted items will appear here -->
+    </ul>
+
+    <script>
+        const form = document.getElementById('potluckForm');
+        const itemList = document.getElementById('itemList');
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Get name and item values
+            const name = document.getElementById('name').value;
+            const item = document.getElementById('item').value;
+
+            // Create a new list item
+            const li = document.createElement('li');
+            li.textContent = `${name} is bringing ${item}`;
+
+            // Add the new list item to the UL
+            itemList.appendChild(li);
+
+            // Clear the input fields
+            form.reset();
+        });
+    </script>
+
+</body>
+</html>
