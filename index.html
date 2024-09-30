@@ -84,6 +84,83 @@
             form.reset();
         });
     </script>
+<script>
+    const form = document.getElementById('potluckForm');
+    const itemList = document.getElementById('itemList');
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const name = document.getElementById('name').value;
+        const item = document.getElementById('item').value;
+
+        const li = document.createElement('li');
+        li.textContent = `${name} is bringing ${item}`;
+
+        // Create delete button
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'Remove';
+        deleteBtn.style.marginLeft = '10px';
+        deleteBtn.addEventListener('click', function() {
+            itemList.removeChild(li);
+        });
+
+        li.appendChild(deleteBtn);
+        itemList.appendChild(li);
+
+        form.reset();
+    });
+</script>
+<script>
+    const form = document.getElementById('potluckForm');
+    const itemList = document.getElementById('itemList');
+
+    // Function to save items to LocalStorage
+    function saveItems() {
+        const items = itemList.innerHTML;
+        localStorage.setItem('potluckItems', items);
+    }
+
+    // Load items from LocalStorage on page load
+    window.onload = function() {
+        const savedItems = localStorage.getItem('potluckItems');
+        if (savedItems) {
+            itemList.innerHTML = savedItems;
+            // Re-attach delete button functionality after loading from LocalStorage
+            itemList.querySelectorAll('li').forEach((li) => {
+                const deleteBtn = li.querySelector('button');
+                deleteBtn.addEventListener('click', function() {
+                    itemList.removeChild(li);
+                    saveItems(); // Save updated list to LocalStorage
+                });
+            });
+        }
+    };
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const name = document.getElementById('name').value;
+        const item = document.getElementById('item').value;
+
+        const li = document.createElement('li');
+        li.textContent = `${name} is bringing ${item}`;
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'Remove';
+        deleteBtn.style.marginLeft = '10px';
+        deleteBtn.addEventListener('click', function() {
+            itemList.removeChild(li);
+            saveItems();
+        });
+
+        li.appendChild(deleteBtn);
+        itemList.appendChild(li);
+
+        saveItems(); // Save the new item to LocalStorage
+        form.reset();
+    });
+</script>
 
 </body>
 </html>
