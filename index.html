@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Día de los Muertos Potluck</title>
+    <title>Día de los Muertos</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: Avenir, sans-serif;
             max-width: 600px;
             margin: auto;
             padding: 20px;
@@ -35,8 +35,18 @@
     </style>
 </head>
 <body>
-    <h1>Día de Los Muertos Potluck</h1>
 
+    <h1>Día de Los Muertos Party Potluck List</h1>
+    <h2>🎉 Join the Fun at Our Día de Los Muertos Party! 🎉</h2>
+
+    <p>We're excited to have you join us for an evening filled with <strong>games, snacks, treats, and great company</strong>! But what's a potluck without the amazing dishes that everyone brings to share? We’d love for you to contribute a <strong>delicious entrée or side dish</strong> to make the party even more special. 😋</p>
+
+    <p>Simply leave your <strong>name or apartment number</strong> below along with what you're bringing, so we can all look forward to it!</p>
+
+    <p>We’ve got beverages covered, but just a reminder—<strong>this is a BYOB event</strong> 🍻, so don’t forget to bring your favorite drink to keep the good vibes flowing!</p>
+
+    <p>Looking forward to seeing you there! 🎊</p>
+    
     <form id="potluckForm">
         <label for="name">Your Name:</label>
         <input type="text" id="name" required>
@@ -48,61 +58,60 @@
     </form>
 
     <h2>Community Potluck Items:</h2>
-    <ul id="itemList"></ul>
-
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-firestore.js"></script>
+    <ul id="itemList">
+        <!-- Submitted items will appear here -->
+    </ul>
 
     <script>
-        // Firebase configuration from the Firebase Console
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
-
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
         const form = document.getElementById('potluckForm');
         const itemList = document.getElementById('itemList');
 
-        // Submit form and save data to Firestore
-        form.addEventListener('submit', async function(event) {
+        // Function to save items to LocalStorage
+        function saveItems() {
+            const items = itemList.innerHTML;
+            localStorage.setItem('potluckItems', items);
+        }
+
+        // Load items from LocalStorage on page load
+        window.onload = function() {
+            const savedItems = localStorage.getItem('potluckItems');
+            if (savedItems) {
+                itemList.innerHTML = savedItems;
+                // Re-attach delete button functionality after loading from LocalStorage
+                itemList.querySelectorAll('li').forEach((li) => {
+                    const deleteBtn = li.querySelector('button');
+                    deleteBtn.addEventListener('click', function() {
+                        itemList.removeChild(li);
+                        saveItems(); // Save updated list to LocalStorage
+                    });
+                });
+            }
+        };
+
+        form.addEventListener('submit', function(event) {
             event.preventDefault();
 
             const name = document.getElementById('name').value;
             const item = document.getElementById('item').value;
 
-            // Add the item to the Firestore collection
-            await db.collection('potluckItems').add({
-                name: name,
-                item: item
+            const li = document.createElement('li');
+            li.textContent = `${name} is bringing ${item}`;
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Remove';
+            deleteBtn.style.marginLeft = '10px';
+            deleteBtn.addEventListener('click', function() {
+                itemList.removeChild(li);
+                saveItems();
             });
 
+            li.appendChild(deleteBtn);
+            itemList.appendChild(li);
+
+            saveItems(); // Save the new item to LocalStorage
             form.reset();
-            loadItems(); // Reload the items list
         });
-
-        // Load items from Firestore and display them
-        async function loadItems() {
-            itemList.innerHTML = ''; // Clear the list
-
-            const snapshot = await db.collection('potluckItems').get();
-            snapshot.forEach(doc => {
-                const li = document.createElement('li');
-                li.textContent = `${doc.data().name} is bringing ${doc.data().item}`;
-                itemList.appendChild(li);
-            });
-        }
-
-        // Load items when the page loads
-        window.onload = loadItems;
     </script>
+
 </body>
 </html>
