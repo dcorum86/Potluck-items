@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Día de los Muertos</title>
+    <title>Día de los Muertos Potluck</title>
     <style>
         body {
             font-family: Avenir, sans-serif;
@@ -62,55 +62,60 @@
         <!-- Submitted items will appear here -->
     </ul>
 
-    <script>
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import the Firebase functions you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+        // Your Firebase configuration from your screenshot
+        const firebaseConfig = {
+            apiKey: "AIzaSyDayFy6bXv1XSrASGe1IK60JvNvYSLLF5w",
+            authDomain: "di-de-los-muertos-party.firebaseapp.com",
+            projectId: "di-de-los-muertos-party",
+            storageBucket: "di-de-los-muertos-party.appspot.com",
+            messagingSenderId: "977066550704",
+            appId: "1:977066550704:web:da5d27fa24c8b019bfe275"
+        };
+
+        // Initialize Firebase and Firestore
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
         const form = document.getElementById('potluckForm');
         const itemList = document.getElementById('itemList');
 
-        // Function to save items to LocalStorage
-        function saveItems() {
-            const items = itemList.innerHTML;
-            localStorage.setItem('potluckItems', items);
-        }
-
-        // Load items from LocalStorage on page load
-        window.onload = function() {
-            const savedItems = localStorage.getItem('potluckItems');
-            if (savedItems) {
-                itemList.innerHTML = savedItems;
-                // Re-attach delete button functionality after loading from LocalStorage
-                itemList.querySelectorAll('li').forEach((li) => {
-                    const deleteBtn = li.querySelector('button');
-                    deleteBtn.addEventListener('click', function() {
-                        itemList.removeChild(li);
-                        saveItems(); // Save updated list to LocalStorage
-                    });
-                });
-            }
-        };
-
-        form.addEventListener('submit', function(event) {
+        // Submit form and save data to Firestore
+        form.addEventListener('submit', async function(event) {
             event.preventDefault();
 
             const name = document.getElementById('name').value;
             const item = document.getElementById('item').value;
 
-            const li = document.createElement('li');
-            li.textContent = `${name} is bringing ${item}`;
-
-            const deleteBtn = document.createElement('button');
-            deleteBtn.textContent = 'Remove';
-            deleteBtn.style.marginLeft = '10px';
-            deleteBtn.addEventListener('click', function() {
-                itemList.removeChild(li);
-                saveItems();
+            // Add the item to the Firestore collection
+            await addDoc(collection(db, "potluckItems"), {
+                name: name,
+                item: item
             });
 
-            li.appendChild(deleteBtn);
-            itemList.appendChild(li);
-
-            saveItems(); // Save the new item to LocalStorage
             form.reset();
+            loadItems(); // Reload the items list
         });
+
+        // Load items from Firestore and display them
+        async function loadItems() {
+            itemList.innerHTML = ''; // Clear the list
+
+            const querySnapshot = await getDocs(collection(db, "potluckItems"));
+            querySnapshot.forEach((doc) => {
+                const li = document.createElement('li');
+                li.textContent = `${doc.data().name} is bringing ${doc.data().item}`;
+                itemList.appendChild(li);
+            });
+        }
+
+        // Load items when the page loads
+        window.onload = loadItems;
     </script>
 
 </body>
