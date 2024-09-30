@@ -62,14 +62,15 @@
         <!-- Submitted items will appear here -->
     </ul>
 
-    <!-- Firebase CDN -->
-    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js"></script>
+    <!-- Firebase Configuration and SDKs -->
+    <script type="module">
+        // Import the Firebase and Firestore functions you need from the SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 
-    <script>
-        // Your Firebase configuration
+        // Your web app's Firebase configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyDayFy6bXv1XSrASGe1IK60JvNvYSLLF5w",
+            apiKey: "AIzaSyDayfY6bXv1XSrASGeI1K60JyNvYSLLF5w",
             authDomain: "di-de-los-muertos-party.firebaseapp.com",
             projectId: "di-de-los-muertos-party",
             storageBucket: "di-de-los-muertos-party.appspot.com",
@@ -78,8 +79,8 @@
         };
 
         // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
         const form = document.getElementById('potluckForm');
         const itemList = document.getElementById('itemList');
@@ -92,7 +93,7 @@
             const item = document.getElementById('item').value;
 
             // Add the item to the Firestore collection
-            await db.collection('potluckItems').add({
+            await addDoc(collection(db, "potluckItems"), {
                 name: name,
                 item: item
             });
@@ -105,7 +106,7 @@
         async function loadItems() {
             itemList.innerHTML = ''; // Clear the list
 
-            const querySnapshot = await db.collection('potluckItems').get();
+            const querySnapshot = await getDocs(collection(db, "potluckItems"));
             querySnapshot.forEach((doc) => {
                 const li = document.createElement('li');
                 li.textContent = `${doc.data().name} is bringing ${doc.data().item}`;
