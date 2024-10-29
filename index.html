@@ -12,23 +12,8 @@
             padding: 20px;
             background-color: #f4f4f4;
         }
-        h1 {
+        h1, h2, h3, p {
             text-align: center;
-        }
-          
-        h2 {
-            text-align: center;
-        }
-          
-        h3 {
-            text-align: center;
-        }
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-        label, input, button {
-            margin: 10px 0;
         }
         ul {
             list-style-type: none;
@@ -40,44 +25,18 @@
             margin: 5px 0;
             border-radius: 5px;
         }
-         h2 {
-            text-align: center;
-        }
-         p {
-            text-align: center;
-        }
-         form {
-            text-align: center;
-        }
     </style>
 </head>
-<body><img src="./DiaDeLosMuertosBannerAsset 1@4x-8.png" alt="Día de los Muertos Banner" style="max-width: 650px; width: 100%; display: block; margin: 0 auto;">
+<body>
 
-<h1>Join the Fun in the Courtyard for Our Día de Los Muertos Party! 🎉 🎉</h1>
+    <img src="./DiaDeLosMuertosBannerAsset 1@4x-8.png" alt="Día de los Muertos Banner" style="max-width: 650px; width: 100%; display: block; margin: 0 auto;">
 
- <p>We’re looking forward to a night of <strong>good food and even better vibes!</strong> We’d absolutely love it if you brought something to share—whether it’s an <strong>entrée, side, or dessert</strong>.</p>
+    <h1>Thank you for RSVPing!</h1>
+    <p>Be prepared for a great time with amazing food and friends!</p>
 
-<p>Just drop your <strong>name or apartment number</strong> and <strong>what you’re bringing + how many guests</strong>. Your entry will also count as your RSVP! All entries will be displayed below so we all know who's bringing what.</p>
-
-<p>We’ve got non-alcoholic drinks and snacks covered, but feel free to <strong>BYOB</strong> if you want something else. 🍻</p>
-<h3><strong>Costumes Highly Encouraged!</strong></h3>
-
-<p>We are also excited to include a meaningful community ofrenda to honor those celebrating Día de los Muertos.</p>
-
-<p>A huge shoutout to the management team for letting us do this! <3</p>
-
-<p>Stoked to see you all! 🎊</p>
-
-    
-    <form id="potluckForm">
-        <label for="name">Your Name or Apt. #:</label>
-        <input type="text" id="name" required>
-
-        <label for="item">What Are You Bringing and How Many People?:</label>
-        <input type="text" id="item" required>
-
-        <button type="submit">Submit</button>
-    </form>
+    <h3>Costumes Highly Encouraged!</h3>
+    <p>We are excited to include a meaningful community ofrenda to honor those celebrating Día de los Muertos.</p>
+    <p>A huge shoutout to the management team for letting us do this! <3</p>
 
     <h2>Community Potluck Items:</h2>
     <ul id="itemList">
@@ -88,7 +47,7 @@
     <script type="module">
         // Import the Firebase and Firestore functions you need from the SDK
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
@@ -103,26 +62,7 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-
-        const form = document.getElementById('potluckForm');
         const itemList = document.getElementById('itemList');
-
-        // Submit form and save data to Firestore
-        form.addEventListener('submit', async function(event) {
-            event.preventDefault();
-
-            const name = document.getElementById('name').value;
-            const item = document.getElementById('item').value;
-
-            // Add the item to the Firestore collection
-            await addDoc(collection(db, "potluckItems"), {
-                name: name,
-                item: item
-            });
-
-            form.reset();
-            loadItems(); // Reload the items list
-        });
 
         // Load items from Firestore and display them
         async function loadItems() {
